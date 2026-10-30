@@ -14,6 +14,10 @@ public class TopicService {
     }
     // Internal demo-only topic: stores application state-change events for the terminal board.
     public void ensureEvents() { ensure(Config.EVENTS_TOPIC, 1, false); }
+    public boolean exists(String name) {
+        try (Admin admin = Admin.create(props)) { return admin.listTopics().names().get().contains(name); }
+        catch (Exception e) { throw new RuntimeException("Unable to check topic " + name, e); }
+    }
     public int partitions(String name) {
         try (Admin admin = Admin.create(props)) { return admin.describeTopics(List.of(name)).allTopicNames().get().get(name).partitions().size(); }
         catch (Exception e) { throw new RuntimeException(e); }
